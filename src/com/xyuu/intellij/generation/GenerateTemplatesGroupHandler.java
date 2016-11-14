@@ -23,6 +23,7 @@ import com.intellij.psi.PsiDocCommentOwner;
 import com.intellij.psi.PsiFile;
 import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.util.ui.UIUtil;
+import org.apache.velocity.VelocityContext;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -35,6 +36,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.Collection;
 
 /**
@@ -187,7 +189,7 @@ public class GenerateTemplatesGroupHandler extends GenerateAccessorProviderRegis
             if (members == null) return;
             WriteCommandAction.runWriteCommandAction(project, () -> {
                 try {
-                    doGenerate(project, aClass, members);
+                    doGenerate(project,aClass, members);
                 }
                 catch (GenerateCodeException e) {
                     final String message = e.getMessage();
@@ -203,7 +205,16 @@ public class GenerateTemplatesGroupHandler extends GenerateAccessorProviderRegis
     }
 
     private void doGenerate(Project project, PsiClass aClass, ClassMember[] members) {
-
+        String template = TemplatesGroupManager.getInstance().getDefaultTemplate().getTemplate();
+        TemplatesGroupEngine engine = new TemplatesGroupEngine(project,false);
+        try {
+            VelocityContext context = engine.getContext();
+            context.put("entity",aClass);
+            context.put("members",members);
+            engine.mergeTemplate(template,null);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     protected void cleanup() {

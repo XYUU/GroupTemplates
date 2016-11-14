@@ -1,1 +1,5 @@
-test template
+
+$engine.evalFileTemplate("bs3-formcrud","")
+$engine.evalFileTemplate("bs3-formcrud","")
+$engine.evalFileTemplate("bs3-formcrud","")
+$engine.evalFileTemplate("bs3-formcrud","")
