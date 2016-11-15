@@ -3,6 +3,7 @@ package com.xyuu.intellij.generation;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
+import com.xyuu.intellij.GroupTemplate;
 import org.jetbrains.java.generate.exception.TemplateResourceException;
 import org.jetbrains.java.generate.template.TemplateResource;
 import org.jetbrains.java.generate.template.TemplatesManager;
@@ -25,7 +26,7 @@ public class TemplatesGroupManager  extends TemplatesManager {
     public TemplateResource[] getDefaultTemplates() {
         try {
             return new TemplateResource[]{
-                    new TemplateResource("IntelliJ Default", readFile(DEFAULT), true),
+                    new GroupTemplate("IntelliJ Default", readFile(DEFAULT),null, "vm",true)
             };
         }
         catch (IOException e) {

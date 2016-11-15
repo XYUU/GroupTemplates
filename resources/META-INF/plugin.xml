@@ -30,9 +30,10 @@
                                  instance="com.intellij.codeInsight.template.impl.TemplatesGroupConfigurable"
                                  id="editing.templatesGroup"
                                  key="title.file.templatesGroup" bundle="messages.TemplatesGroupBundle"/>
-
         <applicationService serviceInterface="com.xyuu.intellij.generation.TemplatesGroupManager"
                             serviceImplementation="com.xyuu.intellij.generation.TemplatesGroupManager"/>
+        <fileTemplateGroup implementation="net.xyuu.intellij.extensions.BatchTemplateGroupDescriptorFactory"/>
+        <defaultTemplatePropertiesProvider implementation="net.xyuu.intellij.extensions.TemplateGroupPropertiesProvider"/>
     </extensions>
     <actions>
         <action id="GenerateTemplatesGroup" class="com.xyuu.intellij.actions.GenerateTemplatesGroupAction" text="批量生成"

@@ -4,6 +4,8 @@ import com.intellij.codeInsight.CodeInsightActionHandler;
 import com.intellij.codeInsight.CodeInsightUtilBase;
 import com.intellij.codeInsight.generation.*;
 import com.intellij.codeInsight.template.impl.TemplatesGroupBundle;
+import com.intellij.ide.fileTemplates.actions.AttributesDefaults;
+import com.intellij.ide.fileTemplates.ui.CreateFromTemplateDialog;
 import com.intellij.ide.util.MemberChooser;
 import com.intellij.lang.ContextAwareActionHandler;
 import com.intellij.openapi.actionSystem.DataContext;
@@ -18,12 +20,10 @@ import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.ComponentWithBrowseButton;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiDocCommentOwner;
-import com.intellij.psi.PsiFile;
+import com.intellij.psi.*;
 import com.intellij.ui.ListCellRendererWrapper;
 import com.intellij.util.ui.UIUtil;
-import org.apache.velocity.VelocityContext;
+import com.xyuu.intellij.GroupTemplate;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -36,8 +36,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.util.Collection;
+import java.util.Properties;
 
 /**
  * Created by XYUU on 2016/11/12.
@@ -189,7 +189,7 @@ public class GenerateTemplatesGroupHandler extends GenerateAccessorProviderRegis
             if (members == null) return;
             WriteCommandAction.runWriteCommandAction(project, () -> {
                 try {
-                    doGenerate(project,aClass, members);
+                    doGenerate(project,file,aClass, members);
                 }
                 catch (GenerateCodeException e) {
                     final String message = e.getMessage();
@@ -204,16 +204,16 @@ public class GenerateTemplatesGroupHandler extends GenerateAccessorProviderRegis
         }
     }
 
-    private void doGenerate(Project project, PsiClass aClass, ClassMember[] members) {
-        String template = TemplatesGroupManager.getInstance().getDefaultTemplate().getTemplate();
-        TemplatesGroupEngine engine = new TemplatesGroupEngine(project,false);
-        try {
-            VelocityContext context = engine.getContext();
-            context.put("entity",aClass);
-            context.put("members",members);
-            engine.mergeTemplate(template,null);
-        } catch (IOException e) {
-            e.printStackTrace();
+    private void doGenerate(Project project, PsiFile file,PsiClass aClass, ClassMember[] members) {
+        TemplateResource template = TemplatesGroupManager.getInstance().getDefaultTemplate();
+        if(template instanceof GroupTemplate) {
+            GroupTemplate selectedTemplate = (GroupTemplate) template;
+            Properties properties = new Properties();
+            properties.put("", "");
+            PsiDirectory dir = file.getContainingDirectory();
+            AttributesDefaults defaults = null;
+            final CreateFromTemplateDialog dialog = new CreateFromTemplateDialog(project, dir, selectedTemplate, defaults, properties);
+            PsiElement createdElement = dialog.create();
         }
     }
 
